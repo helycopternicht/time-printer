@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-class TimeFormatterServiceApplicationTests {
+class TimePrinterApplicationTests {
 
     @Autowired
     private CommandLineRunner runner;

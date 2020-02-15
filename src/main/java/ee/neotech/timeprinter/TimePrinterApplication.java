@@ -69,6 +69,8 @@ public class TimePrinterApplication implements CommandLineRunner {
     private void print() {
         List<DateEntity> all = dateEntityService.findAll();
         String stringRepresentation = formatterService.getStringRepresentation(all);
+        System.out.println("All results");
+        System.out.println("-------------------------------------------");
         System.out.println(stringRepresentation);
     }
 }

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ee.neotech</groupId>
-    <artifactId>time-formatterService</artifactId>
+    <artifactId>time-printer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>time-formatterService</name>
-    <description>Demo project for Spring Boot</description>
+    <name>time-printer</name>
+    <description>Test task</description>
 
     <properties>
         <java.version>1.8</java.version>
