@@ -27,13 +27,13 @@ Build application
 ```
 
 ### Step 4.
-Start application in write mode. Without parameters
+Start application in write mode. Without parameters. And after few time press Ctrl+C to terminate app.
 ```
 java -jar target/time-printer-0.0.1-SNAPSHOT.jar
 ```
 
 ### Step 4.
-Start application in read mode. With '-p' parameter
+Start application in read mode ('-p' parameter) to see printed results.
 ```
 java -jar target/time-printer-0.0.1-SNAPSHOT.jar -p
 ```
