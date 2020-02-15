@@ -1,4 +1,4 @@
-#HOW TO INSTALL time-printer
+# HOW TO INSTALL time-printer
 
 ### Requirements
 To start project you need:
