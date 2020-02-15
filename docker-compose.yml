@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.6
+    hostname: db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - ./initial_scripts:/docker-entrypoint-initdb.d/
