@@ -19,7 +19,7 @@ public class ProducerServiceImplTest {
     }
 
     @Test
-    public void run_Should_push_timestamp_to_queue_only_once() {
+    public void run_ShouldPushTimestampToQueueOnlyOnce() {
         producerService.run();
         Mockito.verify(queue, Mockito.times(1)).push(Mockito.any(Timestamp.class));
     }

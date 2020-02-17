@@ -1,9 +1,9 @@
 package ee.neotech.timeprinter.database.impl;
 
+import ee.neotech.timeprinter.config.PropertyHolder;
 import ee.neotech.timeprinter.database.ConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -17,30 +17,23 @@ public class MonoConnectionPool implements ConnectionPool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MonoConnectionPool.class);
 
-    private static final int DATABASE_RECONNECTION_INTERVAL_SEC = 5;
-    private static final int CONNECTION_VALIDATE_TIMEOUT_SEC = 1;
-
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.username}")
-    private String user;
-
-    @Value("${spring.datasource.password}")
-    private String pwd;
-
+    private final PropertyHolder propertyHolder;
     private Connection connection;
+
+    public MonoConnectionPool(PropertyHolder propertyHolder) {
+        this.propertyHolder = propertyHolder;
+    }
 
     @Override
     public Connection getConnection() {
         boolean success = false;
         while (!success) {
             try {
-                if (connection != null && connection.isValid(CONNECTION_VALIDATE_TIMEOUT_SEC)) {
+                if (connection != null && connection.isValid(propertyHolder.getValidateTimeout())) {
                     return connection;
                 }
                 tryToClose(connection);
-                connection = DriverManager.getConnection(url, user, pwd);
+                connection = DriverManager.getConnection(propertyHolder.getUrl(), propertyHolder.getUser(), propertyHolder.getPwd());
                 success = true;
                 LOGGER.info("Connection successful established");
             } catch (SQLTimeoutException e) {
@@ -56,7 +49,7 @@ public class MonoConnectionPool implements ConnectionPool {
 
     private void waitForTimeout() {
         try {
-            TimeUnit.SECONDS.sleep(DATABASE_RECONNECTION_INTERVAL_SEC);
+            TimeUnit.SECONDS.sleep(propertyHolder.getReconnectionInterval());
         } catch (InterruptedException e) {
             LOGGER.error("Waiting interrupted", e);
             Thread.currentThread().interrupt();

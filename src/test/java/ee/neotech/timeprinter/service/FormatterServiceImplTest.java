@@ -11,12 +11,12 @@ import java.util.List;
 
 public class FormatterServiceImplTest {
 
-    private final FormatterService service = new FormatterServiceImpl();
+    private final FormatterService formatter = new FormatterServiceImpl();
 
     @Test
-    public void getStringRepresentation_Should_return_formatted_string() {
+    public void getStringRepresentation_ShouldReturnFormattedString() {
         List<DateEntity> entities = Collections.singletonList(new DateEntity(1L, new Timestamp(1000)));
-        String actualResult = service.getStringRepresentation(entities);
+        String actualResult = formatter.getStringRepresentation(entities);
 
         Assert.assertEquals("{id: 1, time: 06:00:01}\n", actualResult);
     }

@@ -1,8 +1,8 @@
 package ee.neotech.timeprinter.service.impl;
 
 import ee.neotech.timeprinter.entity.DateEntity;
+import ee.neotech.timeprinter.repository.DateEntityRepository;
 import ee.neotech.timeprinter.service.ConsumerService;
-import ee.neotech.timeprinter.service.DateEntityService;
 import ee.neotech.timeprinter.service.TimeQueue;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +12,16 @@ import java.sql.Timestamp;
 public class ConsumerServiceImpl implements ConsumerService {
 
     private final TimeQueue queue;
-    private final DateEntityService dateEntityService;
+    private final DateEntityRepository repository;
 
-    public ConsumerServiceImpl(TimeQueue queue, DateEntityService dateEntityService) {
+    public ConsumerServiceImpl(TimeQueue queue, DateEntityRepository repository) {
         this.queue = queue;
-        this.dateEntityService = dateEntityService;
+        this.repository = repository;
     }
 
     private void consume() throws InterruptedException {
         Timestamp timestamp = queue.pop();
-        dateEntityService.save(new DateEntity(null, timestamp));
+        repository.save(new DateEntity(null, timestamp));
     }
 
     @Override

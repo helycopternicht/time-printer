@@ -1,8 +1,8 @@
 package ee.neotech.timeprinter;
 
 import ee.neotech.timeprinter.entity.DateEntity;
+import ee.neotech.timeprinter.repository.DateEntityRepository;
 import ee.neotech.timeprinter.service.ConsumerService;
-import ee.neotech.timeprinter.service.DateEntityService;
 import ee.neotech.timeprinter.service.FormatterService;
 import ee.neotech.timeprinter.service.ProducerService;
 import ee.neotech.timeprinter.service.impl.ConsumerServiceImpl;
@@ -30,17 +30,17 @@ public class TimePrinterApplication implements CommandLineRunner {
     private final ProducerService producerService;
     private final ConsumerService consumerService;
     private final FormatterService formatterService;
-    private final DateEntityService dateEntityService;
+    private final DateEntityRepository repository;
 
     @Autowired
     public TimePrinterApplication(ProducerServiceImpl producer,
                                   ConsumerServiceImpl consumer,
                                   FormatterService formatterService,
-                                  DateEntityService dateEntityService) {
+                                  DateEntityRepository repository) {
         this.producerService = producer;
         this.consumerService = consumer;
         this.formatterService = formatterService;
-        this.dateEntityService = dateEntityService;
+        this.repository = repository;
     }
 
     public static void main(String[] args) {
@@ -67,10 +67,9 @@ public class TimePrinterApplication implements CommandLineRunner {
     }
 
     private void print() {
-        List<DateEntity> all = dateEntityService.findAll();
-        String stringRepresentation = formatterService.getStringRepresentation(all);
+        List<DateEntity> all = repository.findAll();
         System.out.println("All results");
         System.out.println("-------------------------------------------");
-        System.out.println(stringRepresentation);
+        System.out.println(formatterService.getStringRepresentation(all));
     }
 }

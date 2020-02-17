@@ -1,11 +1,11 @@
 package ee.neotech.timeprinter;
 
+import ee.neotech.timeprinter.config.PropertyHolder;
 import ee.neotech.timeprinter.entity.DateEntity;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -22,53 +22,48 @@ class TimePrinterApplicationTests {
     @Autowired
     private CommandLineRunner runner;
 
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.username}")
-    private String user;
-
-    @Value("${spring.datasource.password}")
-    private String pwd;
-
+    @Autowired
+    private PropertyHolder propertyHolder;
 
     @BeforeEach
-    public void init() {
+    void init() {
         clear();
     }
 
     @Test
-    void contextLoads() {
-    }
-
-    @Test
-    void run_WhenApplicationStarted_ThereShouldBeRowsInTable() throws Exception {
+    void run_WhenApplicationWorkSomeTime_ShouldBeRowsInTable() throws Exception {
         runner.run();
-        TimeUnit.SECONDS.sleep(2);
+        TimeUnit.SECONDS.sleep(1);
 
 		Assert.assertFalse(getAll().isEmpty());
     }
 
 	@Test
-	void run_WhenApplicationStarted_ThereShouldBeRowsInRightOrder() throws Exception {
+	void run_WhenApplicationStarted_ShouldBeRowsInRightOrder() throws Exception {
 		runner.run();
 		TimeUnit.SECONDS.sleep(5);
 
-		List<DateEntity> all = getAll();
-
-		List<DateEntity> sortedById = all.stream()
-				.sorted(Comparator.comparing(DateEntity::getId))
-				.collect(Collectors.toList());
-
-		List<DateEntity> sortedByTimestamp = all.stream()
+		List<DateEntity> original = getAll();
+		List<DateEntity> sortedByTimestamp = original.stream()
 				.sorted(Comparator.comparing(DateEntity::getTimestamp))
 				.collect(Collectors.toList());
 
-		Assert.assertEquals(sortedById, sortedByTimestamp);
+		Assert.assertEquals(original, sortedByTimestamp);
 	}
 
+	@Test
+    void run_WhenApplicationInPrintMode_ShouldNotCreateNewRecords() throws Exception {
+        List<DateEntity> atBeginning = getAll();
+
+        runner.run("-p");
+        TimeUnit.MILLISECONDS.sleep(500);
+
+        List<DateEntity> atFinish = getAll();
+        Assert.assertEquals(atBeginning, atFinish);
+    }
+
     private void clear() {
-        try (Connection connection = DriverManager.getConnection(url, user, pwd);
+        try (Connection connection = DriverManager.getConnection(propertyHolder.getUrl(), propertyHolder.getUser(), propertyHolder.getPwd());
              PreparedStatement ps = connection.prepareStatement("DELETE FROM times")) {
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -78,7 +73,7 @@ class TimePrinterApplicationTests {
 
     private List<DateEntity> getAll() {
 		List<DateEntity> list = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, user, pwd);
+        try (Connection connection = DriverManager.getConnection(propertyHolder.getUrl(), propertyHolder.getUser(), propertyHolder.getPwd());
              PreparedStatement ps = connection.prepareStatement("SELECT * FROM times");
              ResultSet rs = ps.executeQuery()) {
 
