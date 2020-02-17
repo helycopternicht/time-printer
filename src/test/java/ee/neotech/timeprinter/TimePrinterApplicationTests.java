@@ -51,17 +51,6 @@ class TimePrinterApplicationTests {
 		Assert.assertEquals(original, sortedByTimestamp);
 	}
 
-	@Test
-    void run_WhenApplicationInPrintMode_ShouldNotCreateNewRecords() throws Exception {
-        List<DateEntity> atBeginning = getAll();
-
-        runner.run("-p");
-        TimeUnit.MILLISECONDS.sleep(500);
-
-        List<DateEntity> atFinish = getAll();
-        Assert.assertEquals(atBeginning, atFinish);
-    }
-
     private void clear() {
         try (Connection connection = DriverManager.getConnection(propertyHolder.getUrl(), propertyHolder.getUser(), propertyHolder.getPwd());
              PreparedStatement ps = connection.prepareStatement("DELETE FROM times")) {
